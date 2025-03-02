@@ -32,6 +32,12 @@ type Spec struct {
 	Workflows []Workflow `json:"workflows"          yaml:"workflows"`
 	// An element to hold various schemas for the Arazzo Description.
 	Components *Components `json:"components"         yaml:"components"`
+	// Allows extensions to the Arazzo Specification. The field name
+	// MUST begin with x-, for example, x-internal-id. Field names
+	// beginning x-oai-, x-oas-, and x-arazzo are reserved for uses
+	// defined by the OpenAPI Initiative. The value MAY be null, a
+	// primitive, an array or an object.
+	Extensions map[string]any `json:"-"                  yaml:"-"`
 }
 
 // Info is a struct that represents an Arazzo specification 1.0.X info
@@ -51,6 +57,12 @@ type Info struct {
 	// Required. The version identifier of the Arazzo document
 	// (which is distinct from the Arazzo Specification version).
 	Version string `json:"version"     yaml:"version"`
+	// Allows extensions to the Arazzo Specification. The field name
+	// MUST begin with x-, for example, x-internal-id. Field names
+	// beginning x-oai-, x-oas-, and x-arazzo are reserved for uses
+	// defined by the OpenAPI Initiative. The value MAY be null, a
+	// primitive, an array or an object.
+	Extensions map[string]any `json:"-"           yaml:"-"`
 }
 
 // SourceDescription is a struct that represents an Arazzo
@@ -82,6 +94,12 @@ type SourceDescription struct {
 	Url string `json:"url"  yaml:"url"`
 	// The type of source description.
 	Type *SourceDescriptionType `json:"type" yaml:"type"`
+	// Allows extensions to the Arazzo Specification. The field name
+	// MUST begin with x-, for example, x-internal-id. Field names
+	// beginning x-oai-, x-oas-, and x-arazzo are reserved for uses
+	// defined by the OpenAPI Initiative. The value MAY be null, a
+	// primitive, an array or an object.
+	Extensions map[string]any `json:"-"    yaml:"-"`
 }
 
 // SourceDescriptionType is a string that represents the type of
@@ -172,6 +190,12 @@ type Workflow struct {
 	// components/parameters of the current Arazzo document. The list
 	// MUST NOT include duplicate parameters.
 	Parameters []ParameterOrReusable `json:"parameters"     yaml:"parameters"`
+	// Allows extensions to the Arazzo Specification. The field name
+	// MUST begin with x-, for example, x-internal-id. Field names
+	// beginning x-oai-, x-oas-, and x-arazzo are reserved for uses
+	// defined by the OpenAPI Initiative. The value MAY be null, a
+	// primitive, an array or an object.
+	Extensions map[string]any `json:"-"              yaml:"-"`
 }
 
 // Step is a struct that represents an Arazzo specification 1.0.X step
@@ -271,6 +295,12 @@ type Step struct {
 	// defined using a Runtime Expression. The name MUST use keys that
 	// match the regular expression: ^[a-zA-Z0-9\.\-_]+$.
 	Outputs map[string]any `json:"outputs"         yaml:"outputs"`
+	// Allows extensions to the Arazzo Specification. The field name
+	// MUST begin with x-, for example, x-internal-id. Field names
+	// beginning x-oai-, x-oas-, and x-arazzo are reserved for uses
+	// defined by the OpenAPI Initiative. The value MAY be null, a
+	// primitive, an array or an object.
+	Extensions map[string]any `json:"-"               yaml:"-"`
 }
 
 // ParameterOrReusable allows a step to use either a [Parameter] or
@@ -361,6 +391,12 @@ type Parameter struct {
 	// a constant or a Runtime Expression to be evaluated and passed
 	// to the referenced operation or workflow.
 	Value string `json:"value" yaml:"value"`
+	// Allows extensions to the Arazzo Specification. The field name
+	// MUST begin with x-, for example, x-internal-id. Field names
+	// beginning x-oai-, x-oas-, and x-arazzo are reserved for uses
+	// defined by the OpenAPI Initiative. The value MAY be null, a
+	// primitive, an array or an object.
+	Extensions map[string]any `json:"-"     yaml:"-"`
 }
 
 // ParameterLocation is a string that represents the location of a
@@ -428,6 +464,12 @@ type RequestBody struct {
 	Payload any `json:"payload"      yaml:"payload"`
 	// A list of locations and values to set within a payload.
 	Replacements []PayloadReplacement `json:"replacements" yaml:"replacements"`
+	// Allows extensions to the Arazzo Specification. The field name
+	// MUST begin with x-, for example, x-internal-id. Field names
+	// beginning x-oai-, x-oas-, and x-arazzo are reserved for uses
+	// defined by the OpenAPI Initiative. The value MAY be null, a
+	// primitive, an array or an object.
+	Extensions map[string]any `json:"-"            yaml:"-"`
 }
 
 // PayloadReplacement is a struct that represents an Arazzo
@@ -448,6 +490,12 @@ type PayloadReplacement struct {
 	// can be a constant or a Runtime Expression to be evaluated and
 	// passed to the referenced operation or workflow.
 	Value any `json:"value"  yaml:"value"`
+	// Allows extensions to the Arazzo Specification. The field name
+	// MUST begin with x-, for example, x-internal-id. Field names
+	// beginning x-oai-, x-oas-, and x-arazzo are reserved for uses
+	// defined by the OpenAPI Initiative. The value MAY be null, a
+	// primitive, an array or an object.
+	Extensions map[string]any `json:"-"      yaml:"-"`
 }
 
 // Criterion is a struct that represents an Arazzo specification 1.0.X
@@ -479,6 +527,12 @@ type Criterion struct {
 	// variants of JSONPath or XPath be required, then a Criterion
 	// Expression Type Object MUST be specified.
 	Type *CriterionTypeOrCriterionExpressionType `json:"type"      yaml:"type"`
+	// Allows extensions to the Arazzo Specification. The field name
+	// MUST begin with x-, for example, x-internal-id. Field names
+	// beginning x-oai-, x-oas-, and x-arazzo are reserved for uses
+	// defined by the OpenAPI Initiative. The value MAY be null, a
+	// primitive, an array or an object.
+	Extensions map[string]any `json:"-"         yaml:"-"`
 }
 
 // CriterionTypeOrCriterionExpressionType allows a criterion to use
@@ -594,6 +648,12 @@ type CriterionExpressionType struct {
 	// draft-goessner-dispatch-jsonpath-00. The allowed values for
 	// XPath are xpath-30, xpath-20, or xpath-10.
 	Version string `json:"version" yaml:"version"`
+	// Allows extensions to the Arazzo Specification. The field name
+	// MUST begin with x-, for example, x-internal-id. Field names
+	// beginning x-oai-, x-oas-, and x-arazzo are reserved for uses
+	// defined by the OpenAPI Initiative. The value MAY be null, a
+	// primitive, an array or an object.
+	Extensions map[string]any `json:"-"       yaml:"-"`
 }
 
 // CriterionExpressionTypeType is a string that represents the type of
@@ -641,6 +701,12 @@ type SuccessAction struct {
 	// All criteria assertions MUST be satisfied for the action to be
 	// executed.
 	Criteria []Criterion `json:"criteria"   yaml:"criteria"`
+	// Allows extensions to the Arazzo Specification. The field name
+	// MUST begin with x-, for example, x-internal-id. Field names
+	// beginning x-oai-, x-oas-, and x-arazzo are reserved for uses
+	// defined by the OpenAPI Initiative. The value MAY be null, a
+	// primitive, an array or an object.
+	Extensions map[string]any `json:"-"          yaml:"-"`
 }
 
 // SuccessActionType is a string that represents the type of success
@@ -782,6 +848,12 @@ type FailureAction struct {
 	// All criteria assertions MUST be satisfied for the action to be
 	// executed
 	Criteria []Criterion `json:"criteria"   yaml:"criteria"`
+	// Allows extensions to the Arazzo Specification. The field name
+	// MUST begin with x-, for example, x-internal-id. Field names
+	// beginning x-oai-, x-oas-, and x-arazzo are reserved for uses
+	// defined by the OpenAPI Initiative. The value MAY be null, a
+	// primitive, an array or an object.
+	Extensions map[string]any `json:"-"          yaml:"-"`
 }
 
 // FailureActionType is a string that represents the type of failure
@@ -900,4 +972,10 @@ type Components struct {
 	SuccessActions map[string]SuccessAction `json:"successActions" yaml:"successActions"`
 	// An object to hold reusable Failure Action Objects.
 	FailureActions map[string]FailureAction `json:"failureActions" yaml:"failureActions"`
+	// Allows extensions to the Arazzo Specification. The field name
+	// MUST begin with x-, for example, x-internal-id. Field names
+	// beginning x-oai-, x-oas-, and x-arazzo are reserved for uses
+	// defined by the OpenAPI Initiative. The value MAY be null, a
+	// primitive, an array or an object.
+	Extensions map[string]any `json:"-"              yaml:"-"`
 }
