@@ -31,13 +31,13 @@ type Spec struct {
 	// one entry.
 	Workflows []Workflow `json:"workflows"          yaml:"workflows"`
 	// An element to hold various schemas for the Arazzo Description.
-	Components *Components `json:"components"         yaml:"components"`
+	Components *Components `json:"components,omitempty"         yaml:"components,omitempty"`
 	// Allows extensions to the Arazzo Specification. The field name
 	// MUST begin with x-, for example, x-internal-id. Field names
 	// beginning x-oai-, x-oas-, and x-arazzo are reserved for uses
 	// defined by the OpenAPI Initiative. The value MAY be null, a
 	// primitive, an array or an object.
-	Extensions map[string]any `json:"-"                  yaml:"-"`
+	Extensions map[string]any `json:"-,omitempty"                  yaml:"-,omitempty"`
 }
 
 // Info is a struct that represents an Arazzo specification 1.0.X info
@@ -50,10 +50,10 @@ type Info struct {
 	// Required. A human readable title of the Arazzo Description.
 	Title string `json:"title"       yaml:"title"`
 	// A short summary of the Arazzo Description.
-	Summary *string `json:"summary"     yaml:"summary"`
+	Summary *string `json:"summary,omitempty"     yaml:"summary,omitempty"`
 	// A description of the purpose of the workflows defined.
 	// CommonMark syntax MAY be used for rich text representation.
-	Description *string `json:"description" yaml:"description"`
+	Description *string `json:"description,omitempty" yaml:"description,omitempty"`
 	// Required. The version identifier of the Arazzo document
 	// (which is distinct from the Arazzo Specification version).
 	Version string `json:"version"     yaml:"version"`
@@ -62,7 +62,7 @@ type Info struct {
 	// beginning x-oai-, x-oas-, and x-arazzo are reserved for uses
 	// defined by the OpenAPI Initiative. The value MAY be null, a
 	// primitive, an array or an object.
-	Extensions map[string]any `json:"-"           yaml:"-"`
+	Extensions map[string]any `json:"-,omitempty"           yaml:"-,omitempty"`
 }
 
 // SourceDescription is a struct that represents an Arazzo
@@ -93,13 +93,13 @@ type SourceDescription struct {
 	// [Section 4.2]: https://tools.ietf.org/html/rfc3986#section-4.2
 	Url string `json:"url"  yaml:"url"`
 	// The type of source description.
-	Type *SourceDescriptionType `json:"type" yaml:"type"`
+	Type *SourceDescriptionType `json:"type,omitempty" yaml:"type,omitempty"`
 	// Allows extensions to the Arazzo Specification. The field name
 	// MUST begin with x-, for example, x-internal-id. Field names
 	// beginning x-oai-, x-oas-, and x-arazzo are reserved for uses
 	// defined by the OpenAPI Initiative. The value MAY be null, a
 	// primitive, an array or an object.
-	Extensions map[string]any `json:"-"    yaml:"-"`
+	Extensions map[string]any `json:"-,omitempty"    yaml:"-,omitempty"`
 }
 
 // SourceDescriptionType is a string that represents the type of
@@ -135,15 +135,15 @@ type Workflow struct {
 	// expression [A-Za-z0-9_\-]+.
 	WorkflowId string `json:"workflowId"     yaml:"workflowId"`
 	// A summary of the purpose or objective of the workflow.
-	Summary *string `json:"summary"        yaml:"summary"`
+	Summary *string `json:"summary,omitempty"        yaml:"summary,omitempty"`
 	// A description of the workflow. [CommonMark] syntax MAY
 	// be used for rich text representation.
 	//
 	// [CommonMark]: https://spec.commonmark.org/
-	Description *string `json:"description"    yaml:"description"`
+	Description *string `json:"description,omitempty"    yaml:"description,omitempty"`
 	// A JSON Schema 2020-12 object representing the input
 	// parameters used by this workflow.
-	Inputs map[string]any `json:"inputs"         yaml:"inputs"`
+	Inputs map[string]any `json:"inputs,omitempty"         yaml:"inputs,omitempty"`
 	// A list of workflows that MUST be completed before this
 	// workflow can be processed. Each value provided MUST be
 	// a workflowId. If the workflow depended on is defined
@@ -157,7 +157,7 @@ type Workflow struct {
 	//
 	// [Runtime Expression]:
 	// https://spec.openapis.org/arazzo/v1.0.0.html#runtime-expressions
-	DependsOn []string `json:"dependsOn"      yaml:"dependsOn"`
+	DependsOn []string `json:"dependsOn,omitempty"      yaml:"dependsOn,omitempty"`
 	// Required. An ordered list of steps where each step
 	// represents a call to an API operation or to another
 	// workflow.
@@ -168,18 +168,18 @@ type Workflow struct {
 	// Reusable Object is provided, it MUST link to success actions
 	// defined in the components/successActions of the current Arazzo
 	// document. The list MUST NOT include duplicate success actions.
-	SuccessActions []SuccessActionOrReusable `json:"successActions" yaml:"successActions"`
+	SuccessActions []SuccessActionOrReusable `json:"successActions,omitempty" yaml:"successActions,omitempty"`
 	// A list of failure actions that are applicable for all steps
 	// described under this workflow. These failure actions can be
 	// overridden at the step level but cannot be removed there. If a
 	// Reusable Object is provided, it MUST link to failure actions
 	// defined in the components/failureActions of the current Arazzo
 	// document. The list MUST NOT include duplicate failure actions.
-	FailureActions []FailureActionOrReusable `json:"failureActions" yaml:"failureActions"`
+	FailureActions []FailureActionOrReusable `json:"failureActions,omitempty" yaml:"failureActions,omitempty"`
 	// A map between a friendly name and a dynamic output value. The
 	// name MUST use keys that match the regular expression:
 	// ^[a-zA-Z0-9\.\-_]+$.
-	Outputs map[string]any `json:"outputs"        yaml:"outputs"`
+	Outputs map[string]any `json:"outputs,omitempty"        yaml:"outputs,omitempty"`
 	// A list of parameters that are applicable for all steps
 	// described under this workflow. These parameters can be
 	// overridden at the step level but cannot be removed there. Each
@@ -189,13 +189,13 @@ type Workflow struct {
 	// it MUST link to a parameter defined in the
 	// components/parameters of the current Arazzo document. The list
 	// MUST NOT include duplicate parameters.
-	Parameters []ParameterOrReusable `json:"parameters"     yaml:"parameters"`
+	Parameters []ParameterOrReusable `json:"parameters,omitempty"     yaml:"parameters,omitempty"`
 	// Allows extensions to the Arazzo Specification. The field name
 	// MUST begin with x-, for example, x-internal-id. Field names
 	// beginning x-oai-, x-oas-, and x-arazzo are reserved for uses
 	// defined by the OpenAPI Initiative. The value MAY be null, a
 	// primitive, an array or an object.
-	Extensions map[string]any `json:"-"              yaml:"-"`
+	Extensions map[string]any `json:"-,omitempty"              yaml:"-,omitempty"`
 }
 
 // Step is a struct that represents an Arazzo specification 1.0.X step
@@ -209,7 +209,7 @@ type Step struct {
 	// for rich text representation.
 	//
 	// [CommonMark]: https://spec.commonmark.org/
-	Description *string `json:"description"     yaml:"description"`
+	Description *string `json:"description,omitempty"     yaml:"description,omitempty"`
 	// Required. Unique string to represent the step. The stepId
 	// MUST be unique amongst all steps described in the workflow.
 	// The stepId value is case-sensitive. SHOULD conform to the
@@ -225,7 +225,7 @@ type Step struct {
 	// ambiguity or potential clashes. This field is mutually
 	// exclusive of the operationPath and workflowId fields
 	// respectively.
-	OperationId *string `json:"operationId"     yaml:"operationId"`
+	OperationId *string `json:"operationId,omitempty"     yaml:"operationId,omitempty"`
 	// A reference to a Source Description Object combined with a JSON
 	// Pointer to reference an operation. This field is mutually
 	// exclusive of the operationId and workflowId fields
@@ -235,7 +235,7 @@ type Step struct {
 	// description document. If the referenced operation has an
 	// operationId defined then the operationId SHOULD be preferred
 	// over the operationPath.
-	OperationPath *string `json:"operationPath"   yaml:"operationPath"`
+	OperationPath *string `json:"operationPath,omitempty"   yaml:"operationPath,omitempty"`
 	// The workflowId referencing an existing workflow within the
 	// Arazzo Description. If the referenced workflow is contained
 	// within an arazzo type sourceDescription, then the workflowId
@@ -243,7 +243,7 @@ type Step struct {
 	// $sourceDescriptions.<name>.<workflowId>) to avoid ambiguity or
 	// potential clashes. The field is mutually exclusive of the
 	// operationId and operationPath fields respectively.
-	WorkflowId *string `json:"workflowId"      yaml:"workflowId"`
+	WorkflowId *string `json:"workflowId,omitempty"      yaml:"workflowId,omitempty"`
 	// A list of parameters that MUST be passed to an operation or
 	// workflow as referenced by operationId, operationPath, or
 	// workflowId. If a parameter is already defined at the Workflow,
@@ -251,7 +251,7 @@ type Step struct {
 	// a Reusable Object is provided, it MUST link to a parameter
 	// defined in the components/parameters of the current Arazzo
 	// document. The list MUST NOT include duplicate parameters.
-	Parameters []ParameterOrReusable `json:"parameters"      yaml:"parameters"`
+	Parameters []ParameterOrReusable `json:"parameters,omitempty"      yaml:"parameters,omitempty"`
 	// The request body to pass to an operation as referenced by
 	// operationId or operationPath. The requestBody is fully
 	// supported in HTTP methods where the HTTP 1.1 specification
@@ -265,11 +265,11 @@ type Step struct {
 	//
 	// [RFC9110]: https://tools.ietf.org/html/rfc9110
 	// [Section 9.3]: https://tools.ietf.org/html/rfc9110#section-9.3
-	RequestBody *RequestBody `json:"requestBody"     yaml:"requestBody"`
+	RequestBody *RequestBody `json:"requestBody,omitempty"     yaml:"requestBody,omitempty"`
 	// A list of assertions to determine the success of the step. Each
 	// assertion is described using a Criterion Object. All assertions
 	// MUST be satisfied for the step to be deemed successful.
-	SuccessCriteria []Criterion `json:"successCriteria" yaml:"successCriteria"`
+	SuccessCriteria []Criterion `json:"successCriteria,omitempty" yaml:"successCriteria,omitempty"`
 	// An array of success action objects that specify what to do upon
 	// step success. If omitted, the next sequential step shall be
 	// executed as the default behavior. If multiple success actions
@@ -280,7 +280,7 @@ type Step struct {
 	// provided, it MUST link to a success action defined in the
 	// components of the current Arazzo document. The list MUST NOT
 	// include duplicate success actions.
-	OnSuccess []SuccessActionOrReusable `json:"onSuccess"       yaml:"onSuccess"`
+	OnSuccess []SuccessActionOrReusable `json:"onSuccess,omitempty"       yaml:"onSuccess,omitempty"`
 	// An array of failure action objects that specify what to do upon
 	// step failure. If omitted, the default behavior is to break and
 	// return. If multiple failure actions have similar criteria, the
@@ -290,17 +290,17 @@ type Step struct {
 	// remove it. If a Reusable Object is provided, it MUST link to a
 	// failure action defined in the components of the current Arazzo
 	// document. The list MUST NOT include duplicate failure actions
-	OnFailure []FailureActionOrReusable `json:"onFailure"       yaml:"onFailure"`
+	OnFailure []FailureActionOrReusable `json:"onFailure,omitempty"       yaml:"onFailure,omitempty"`
 	// A map between a friendly name and a dynamic output value
 	// defined using a Runtime Expression. The name MUST use keys that
 	// match the regular expression: ^[a-zA-Z0-9\.\-_]+$.
-	Outputs map[string]any `json:"outputs"         yaml:"outputs"`
+	Outputs map[string]any `json:"outputs,omitempty"         yaml:"outputs,omitempty"`
 	// Allows extensions to the Arazzo Specification. The field name
 	// MUST begin with x-, for example, x-internal-id. Field names
 	// beginning x-oai-, x-oas-, and x-arazzo are reserved for uses
 	// defined by the OpenAPI Initiative. The value MAY be null, a
 	// primitive, an array or an object.
-	Extensions map[string]any `json:"-"               yaml:"-"`
+	Extensions map[string]any `json:"-,omitempty"               yaml:"-,omitempty"`
 }
 
 // ParameterOrReusable allows a step to use either a [Parameter] or
@@ -386,17 +386,17 @@ type Parameter struct {
 	// specifies a workflowId, then all parameters map to workflow
 	// inputs. In all other scenarios (e.g., a step specifies an
 	// operationId), the in field MUST be specified.
-	In *ParameterLocation `json:"in"    yaml:"in"`
+	In *ParameterLocation `json:"in,omitempty"    yaml:"in,omitempty"`
 	// Required. The value to pass in the parameter. The value can be
 	// a constant or a Runtime Expression to be evaluated and passed
 	// to the referenced operation or workflow.
-	Value string `json:"value" yaml:"value"`
+	Value string `json:"value,omitempty" yaml:"value,omitempty"`
 	// Allows extensions to the Arazzo Specification. The field name
 	// MUST begin with x-, for example, x-internal-id. Field names
 	// beginning x-oai-, x-oas-, and x-arazzo are reserved for uses
 	// defined by the OpenAPI Initiative. The value MAY be null, a
 	// primitive, an array or an object.
-	Extensions map[string]any `json:"-"     yaml:"-"`
+	Extensions map[string]any `json:"-,omitempty"     yaml:"-,omitempty"`
 }
 
 // ParameterLocation is a string that represents the location of a
@@ -442,7 +442,7 @@ type Reusable struct {
 	Reference string `json:"reference" yaml:"reference"`
 	// Sets a value of the referenced parameter. This is only
 	// applicable for parameter object references.
-	Value string `json:"value"     yaml:"value"`
+	Value string `json:"value,omitempty"     yaml:"value,omitempty"`
 }
 
 // RequestBody is a struct that represents an Arazzo specification
@@ -454,22 +454,22 @@ type RequestBody struct {
 	// The Content-Type for the request content. If omitted then refer
 	// to Content-Type specified at the targeted operation to
 	// understand serialization requirements.
-	ContentType *string `json:"contentType"  yaml:"contentType"`
+	ContentType *string `json:"contentType,omitempty"  yaml:"contentType,omitempty"`
 	// A value representing the request body payload. The value can be
 	// a literal value or can contain Runtime Expressions which MUST
 	// be evaluated prior to calling the referenced operation. To
 	// represent examples of media types that cannot be naturally
 	// represented in JSON or YAML, use a string value to contain the
 	// example, escaping where necessary.
-	Payload any `json:"payload"      yaml:"payload"`
+	Payload any `json:"payload,omitempty"      yaml:"payload,omitempty"`
 	// A list of locations and values to set within a payload.
-	Replacements []PayloadReplacement `json:"replacements" yaml:"replacements"`
+	Replacements []PayloadReplacement `json:"replacements,omitempty" yaml:"replacements,omitempty"`
 	// Allows extensions to the Arazzo Specification. The field name
 	// MUST begin with x-, for example, x-internal-id. Field names
 	// beginning x-oai-, x-oas-, and x-arazzo are reserved for uses
 	// defined by the OpenAPI Initiative. The value MAY be null, a
 	// primitive, an array or an object.
-	Extensions map[string]any `json:"-"            yaml:"-"`
+	Extensions map[string]any `json:"-,omitempty"            yaml:"-,omitempty"`
 }
 
 // PayloadReplacement is a struct that represents an Arazzo
@@ -495,7 +495,7 @@ type PayloadReplacement struct {
 	// beginning x-oai-, x-oas-, and x-arazzo are reserved for uses
 	// defined by the OpenAPI Initiative. The value MAY be null, a
 	// primitive, an array or an object.
-	Extensions map[string]any `json:"-"      yaml:"-"`
+	Extensions map[string]any `json:"-,omitempty"      yaml:"-,omitempty"`
 }
 
 // Criterion is a struct that represents an Arazzo specification 1.0.X
@@ -511,7 +511,7 @@ type Criterion struct {
 	// to be applied on. If type is specified, then the context MUST
 	// be provided (e.g. $response.body would set the context that a
 	// JSONPath query expression could be applied to).
-	Context *string `json:"context"   yaml:"context"`
+	Context *string `json:"context,omitempty"   yaml:"context,omitempty"`
 	// Required. The condition to apply. Conditions can be simple
 	// (e.g. $statusCode == 200 which applies an operator on a value
 	// obtained from a runtime expression), or a regex, or a JSONPath
@@ -526,13 +526,13 @@ type Criterion struct {
 	// expression MUST conform to XML Path Language 3.1. Should other
 	// variants of JSONPath or XPath be required, then a Criterion
 	// Expression Type Object MUST be specified.
-	Type *CriterionTypeOrCriterionExpressionType `json:"type"      yaml:"type"`
+	Type *CriterionTypeOrCriterionExpressionType `json:"type,omitempty"      yaml:"type,omitempty"`
 	// Allows extensions to the Arazzo Specification. The field name
 	// MUST begin with x-, for example, x-internal-id. Field names
 	// beginning x-oai-, x-oas-, and x-arazzo are reserved for uses
 	// defined by the OpenAPI Initiative. The value MAY be null, a
 	// primitive, an array or an object.
-	Extensions map[string]any `json:"-"         yaml:"-"`
+	Extensions map[string]any `json:"-,omitempty"         yaml:"-,omitempty"`
 }
 
 // CriterionTypeOrCriterionExpressionType allows a criterion to use
@@ -653,7 +653,7 @@ type CriterionExpressionType struct {
 	// beginning x-oai-, x-oas-, and x-arazzo are reserved for uses
 	// defined by the OpenAPI Initiative. The value MAY be null, a
 	// primitive, an array or an object.
-	Extensions map[string]any `json:"-"       yaml:"-"`
+	Extensions map[string]any `json:"-,omitempty"       yaml:"-,omitempty"`
 }
 
 // CriterionExpressionTypeType is a string that represents the type of
@@ -690,23 +690,23 @@ type SuccessAction struct {
 	// specified using a Runtime Expression (e.g.,
 	// $sourceDescriptions.<name>.<workflowId>) to avoid ambiguity or
 	// potential clashes. This field is mutually exclusive to stepId.
-	WorkflowId *string `json:"workflowId" yaml:"workflowId"`
+	WorkflowId *string `json:"workflowId,omitempty" yaml:"workflowId,omitempty"`
 	// The stepId to transfer to upon success of the step. This field
 	// is only relevant when the type field value is "goto". The
 	// referenced stepId MUST be within the current workflow. This
 	// field is mutually exclusive to workflowId.
-	StepId *string `json:"stepId"     yaml:"stepId"`
+	StepId *string `json:"stepId,omitempty"     yaml:"stepId,omitempty"`
 	// A list of assertions to determine if this action SHALL be
 	// executed. Each assertion is described using a Criterion Object.
 	// All criteria assertions MUST be satisfied for the action to be
 	// executed.
-	Criteria []Criterion `json:"criteria"   yaml:"criteria"`
+	Criteria []Criterion `json:"criteria,omitempty"   yaml:"criteria,omitempty"`
 	// Allows extensions to the Arazzo Specification. The field name
 	// MUST begin with x-, for example, x-internal-id. Field names
 	// beginning x-oai-, x-oas-, and x-arazzo are reserved for uses
 	// defined by the OpenAPI Initiative. The value MAY be null, a
 	// primitive, an array or an object.
-	Extensions map[string]any `json:"-"          yaml:"-"`
+	Extensions map[string]any `json:"-,omitempty"          yaml:"-,omitempty"`
 }
 
 // SuccessActionType is a string that represents the type of success
@@ -821,39 +821,39 @@ type FailureAction struct {
 	// potential clashes. This field is mutually exclusive to stepId.
 	// When used with "retry", context transfers back upon completion
 	// of the specified workflow.
-	WorkflowId *string `json:"workflowId" yaml:"workflowId"`
+	WorkflowId *string `json:"workflowId,omitempty" yaml:"workflowId,omitempty"`
 	// The stepId to transfer to upon failure of the step. This field
 	// is only relevant when the type field value is "goto" or
 	// "retry". The referenced stepId MUST be within the current
 	// workflow. This field is mutually exclusive to workflowId. When
 	// used with "retry", context transfers back upon completion of
 	// the specified step.
-	StepId *string `json:"stepId"     yaml:"stepId"`
+	StepId *string `json:"stepId,omitempty"     yaml:"stepId,omitempty"`
 	// A non-negative decimal indicating the seconds to delay after
 	// the step failure before another attempt SHALL be made. Note: if
 	// an HTTP Retry-After response header was returned to a step from
 	// a targeted operation, then it SHOULD overrule this particular
 	// field value. This field only applies when the type field value
 	// is "retry".
-	RetryDelay *float64 `json:"retryDelay" yaml:"retryDelay"`
+	RetryDelay *float64 `json:"retryDelay,omitempty" yaml:"retryDelay,omitempty"`
 	// A non-negative integer indicating how many attempts to retry
 	// the step MAY be attempted before failing the overall step. If
 	// not specified then a single retry SHALL be attempted. This
 	// field only applies when the type field value is "retry". The
 	// retryLimit MUST be exhausted prior to executing subsequent
 	// failure actions.
-	RetryLimit *int `json:"retryLimit" yaml:"retryLimit"`
+	RetryLimit *int `json:"retryLimit,omitempty" yaml:"retryLimit,omitempty"`
 	// A list of assertions to determine if this action SHALL be
 	// executed. Each assertion is described using a Criterion Object.
 	// All criteria assertions MUST be satisfied for the action to be
 	// executed
-	Criteria []Criterion `json:"criteria"   yaml:"criteria"`
+	Criteria []Criterion `json:"criteria,omitempty"   yaml:"criteria,omitempty"`
 	// Allows extensions to the Arazzo Specification. The field name
 	// MUST begin with x-, for example, x-internal-id. Field names
 	// beginning x-oai-, x-oas-, and x-arazzo are reserved for uses
 	// defined by the OpenAPI Initiative. The value MAY be null, a
 	// primitive, an array or an object.
-	Extensions map[string]any `json:"-"          yaml:"-"`
+	Extensions map[string]any `json:"-,omitempty"          yaml:"-,omitempty"`
 }
 
 // FailureActionType is a string that represents the type of failure
@@ -965,17 +965,17 @@ func (f FailureActionOrReusable) MarshalYAML() (interface{}, error) {
 type Components struct {
 	// An object to hold reusable JSON Schema objects to be referenced
 	// from workflow inputs.
-	Inputs map[string]any `json:"inputs"         yaml:"inputs"`
+	Inputs map[string]any `json:"inputs,omitempty"         yaml:"inputs,omitempty"`
 	// An object to hold reusable Parameter Objects.
-	Parameters map[string]Parameter `json:"parameters"     yaml:"parameters"`
+	Parameters map[string]Parameter `json:"parameters,omitempty"     yaml:"parameters,omitempty"`
 	// An object to hold reusable Success Action Objects.
-	SuccessActions map[string]SuccessAction `json:"successActions" yaml:"successActions"`
+	SuccessActions map[string]SuccessAction `json:"successActions,omitempty" yaml:"successActions,omitempty"`
 	// An object to hold reusable Failure Action Objects.
-	FailureActions map[string]FailureAction `json:"failureActions" yaml:"failureActions"`
+	FailureActions map[string]FailureAction `json:"failureActions,omitempty" yaml:"failureActions,omitempty"`
 	// Allows extensions to the Arazzo Specification. The field name
 	// MUST begin with x-, for example, x-internal-id. Field names
 	// beginning x-oai-, x-oas-, and x-arazzo are reserved for uses
 	// defined by the OpenAPI Initiative. The value MAY be null, a
 	// primitive, an array or an object.
-	Extensions map[string]any `json:"-"              yaml:"-"`
+	Extensions map[string]any `json:"-,omitempty"              yaml:"-,omitempty"`
 }
