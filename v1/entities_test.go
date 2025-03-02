@@ -5,7 +5,7 @@ import (
 
 	v1 "github.com/bragdonD/arazzo-go/v1"
 	"github.com/go-test/deep"
-	"gopkg.in/yaml.v3"
+	"sigs.k8s.io/yaml"
 )
 
 // strPtr is a helper function to create string pointers.
