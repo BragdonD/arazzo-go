@@ -18,26 +18,26 @@ type Spec struct {
 	// The arazzo field MUST be used by tooling to interpret
 	// the Arazzo Description.
 	// Here, the value MUST match the pattern: "^1\.0\.\d(-.+)?$".
-	Arazzo string `json:"arazzo"             yaml:"arazzo"`
+	Arazzo string `json:"arazzo"               yaml:"arazzo"`
 	// Required. Provides metadata about the workflows contain
 	// within the Arazzo Description. The metadata MAY be used
 	// by tooling as required.
-	Info Info `json:"info"               yaml:"info"`
+	Info Info `json:"info"                 yaml:"info"`
 	// Required. A list of source descriptions (such as an OpenAPI
 	// description) this Arazzo Description SHALL apply to. The
 	// list MUST have at least one entry.
-	SourcesDescriptions []SourceDescription `json:"sourceDescriptions" yaml:"sourceDescriptions"`
+	SourcesDescriptions []SourceDescription `json:"sourceDescriptions"   yaml:"sourceDescriptions"`
 	// Required. A list of workflows. The list MUST have at least
 	// one entry.
-	Workflows []Workflow `json:"workflows"          yaml:"workflows"`
+	Workflows []Workflow `json:"workflows"            yaml:"workflows"`
 	// An element to hold various schemas for the Arazzo Description.
-	Components *Components `json:"components,omitempty"         yaml:"components,omitempty"`
+	Components *Components `json:"components,omitempty" yaml:"components,omitempty"`
 	// Allows extensions to the Arazzo Specification. The field name
 	// MUST begin with x-, for example, x-internal-id. Field names
 	// beginning x-oai-, x-oas-, and x-arazzo are reserved for uses
 	// defined by the OpenAPI Initiative. The value MAY be null, a
 	// primitive, an array or an object.
-	Extensions map[string]any `json:"-,omitempty"                  yaml:"-,omitempty"`
+	Extensions map[string]any `json:"-,omitempty"          yaml:"-,omitempty"`
 }
 
 // Info is a struct that represents an Arazzo specification 1.0.X info
@@ -48,7 +48,7 @@ type Spec struct {
 // needed.
 type Info struct {
 	// Required. A human readable title of the Arazzo Description.
-	Title string `json:"title"       yaml:"title"`
+	Title string `json:"title"                 yaml:"title"`
 	// A short summary of the Arazzo Description.
 	Summary *string `json:"summary,omitempty"     yaml:"summary,omitempty"`
 	// A description of the purpose of the workflows defined.
@@ -56,7 +56,7 @@ type Info struct {
 	Description *string `json:"description,omitempty" yaml:"description,omitempty"`
 	// Required. The version identifier of the Arazzo document
 	// (which is distinct from the Arazzo Specification version).
-	Version string `json:"version"     yaml:"version"`
+	Version string `json:"version"               yaml:"version"`
 	// Allows extensions to the Arazzo Specification. The field name
 	// MUST begin with x-, for example, x-internal-id. Field names
 	// beginning x-oai-, x-oas-, and x-arazzo are reserved for uses
@@ -83,7 +83,7 @@ type Info struct {
 type SourceDescription struct {
 	// Required. A unique name for the source description.
 	// SHOULD conform to the regular expression [A-Za-z0-9_\-]+.
-	Name string `json:"name" yaml:"name"`
+	Name string `json:"name"           yaml:"name"`
 	// Required. A URL to a source description to be used by a
 	// workflow. If a relative reference is used, it MUST be in
 	// the form of a URI-reference as defined by [RFC3986]
@@ -91,7 +91,7 @@ type SourceDescription struct {
 	//
 	// [RFC3986]: https://tools.ietf.org/html/rfc3986
 	// [Section 4.2]: https://tools.ietf.org/html/rfc3986#section-4.2
-	Url string `json:"url"  yaml:"url"`
+	Url string `json:"url"            yaml:"url"`
 	// The type of source description.
 	Type *SourceDescriptionType `json:"type,omitempty" yaml:"type,omitempty"`
 	// Allows extensions to the Arazzo Specification. The field name
@@ -133,7 +133,7 @@ type Workflow struct {
 	// the Arazzo Description. The workflowId value is
 	// case-sensitive. SHOULD conform to the regular
 	// expression [A-Za-z0-9_\-]+.
-	WorkflowId string `json:"workflowId"     yaml:"workflowId"`
+	WorkflowId string `json:"workflowId"               yaml:"workflowId"`
 	// A summary of the purpose or objective of the workflow.
 	Summary *string `json:"summary,omitempty"        yaml:"summary,omitempty"`
 	// A description of the workflow. [CommonMark] syntax MAY
@@ -161,7 +161,7 @@ type Workflow struct {
 	// Required. An ordered list of steps where each step
 	// represents a call to an API operation or to another
 	// workflow.
-	Steps []Step `json:"steps"          yaml:"steps"`
+	Steps []Step `json:"steps"                    yaml:"steps"`
 	// A list of success actions that are applicable for all steps
 	// described under this workflow. These success actions can be
 	// overridden at the step level but cannot be removed there. If a
@@ -214,7 +214,7 @@ type Step struct {
 	// MUST be unique amongst all steps described in the workflow.
 	// The stepId value is case-sensitive. SHOULD conform to the
 	// regular expression [A-Za-z0-9_\-]+.
-	StepId string `json:"stepId"          yaml:"stepId"`
+	StepId string `json:"stepId"                    yaml:"stepId"`
 	// The name of an existing, resolvable operation, as defined
 	// with a unique operationId and existing within one of the
 	// sourceDescriptions. The referenced operation will be
@@ -380,7 +380,7 @@ func (p ParameterOrReusable) MarshalYAML() (interface{}, error) {
 type Parameter struct {
 	// Required. The name of the parameter. Parameter names are case
 	// sensitive.
-	Name string `json:"name"  yaml:"name"`
+	Name string `json:"name"            yaml:"name"`
 	// The location of the parameter. Possible values are "path",
 	// "query", "header", or "cookie". When the step in context
 	// specifies a workflowId, then all parameters map to workflow
@@ -439,10 +439,10 @@ func (p ParameterLocation) ToPtr() *ParameterLocation {
 type Reusable struct {
 	// Required. A Runtime Expression used to reference the desired
 	// object.
-	Reference string `json:"reference" yaml:"reference"`
+	Reference string `json:"reference"       yaml:"reference"`
 	// Sets a value of the referenced parameter. This is only
 	// applicable for parameter object references.
-	Value string `json:"value,omitempty"     yaml:"value,omitempty"`
+	Value string `json:"value,omitempty" yaml:"value,omitempty"`
 }
 
 // RequestBody is a struct that represents an Arazzo specification
@@ -485,17 +485,17 @@ type PayloadReplacement struct {
 	// [JSON Pointer]: https://tools.ietf.org/html/rfc6901
 	// [XPath Expression]:
 	// https://www.w3.org/TR/xpath-31/#id-expressions
-	Target string `json:"target" yaml:"target"`
+	Target string `json:"target"      yaml:"target"`
 	// Required. The value set within the target location. The value
 	// can be a constant or a Runtime Expression to be evaluated and
 	// passed to the referenced operation or workflow.
-	Value any `json:"value"  yaml:"value"`
+	Value any `json:"value"       yaml:"value"`
 	// Allows extensions to the Arazzo Specification. The field name
 	// MUST begin with x-, for example, x-internal-id. Field names
 	// beginning x-oai-, x-oas-, and x-arazzo are reserved for uses
 	// defined by the OpenAPI Initiative. The value MAY be null, a
 	// primitive, an array or an object.
-	Extensions map[string]any `json:"-,omitempty"      yaml:"-,omitempty"`
+	Extensions map[string]any `json:"-,omitempty" yaml:"-,omitempty"`
 }
 
 // Criterion is a struct that represents an Arazzo specification 1.0.X
@@ -511,13 +511,13 @@ type Criterion struct {
 	// to be applied on. If type is specified, then the context MUST
 	// be provided (e.g. $response.body would set the context that a
 	// JSONPath query expression could be applied to).
-	Context *string `json:"context,omitempty"   yaml:"context,omitempty"`
+	Context *string `json:"context,omitempty" yaml:"context,omitempty"`
 	// Required. The condition to apply. Conditions can be simple
 	// (e.g. $statusCode == 200 which applies an operator on a value
 	// obtained from a runtime expression), or a regex, or a JSONPath
 	// expression. For regex or JSONPath, the type and context MUST be
 	// specified.
-	Condition string `json:"condition" yaml:"condition"`
+	Condition string `json:"condition"         yaml:"condition"`
 	// The type of condition to be applied. If specified, the options
 	// allowed are simple, regex, jsonpath or xpath. If omitted, then
 	// the condition is assumed to be simple, which at most combines
@@ -526,13 +526,13 @@ type Criterion struct {
 	// expression MUST conform to XML Path Language 3.1. Should other
 	// variants of JSONPath or XPath be required, then a Criterion
 	// Expression Type Object MUST be specified.
-	Type *CriterionTypeOrCriterionExpressionType `json:"type,omitempty"      yaml:"type,omitempty"`
+	Type *CriterionTypeOrCriterionExpressionType `json:"type,omitempty"    yaml:"type,omitempty"`
 	// Allows extensions to the Arazzo Specification. The field name
 	// MUST begin with x-, for example, x-internal-id. Field names
 	// beginning x-oai-, x-oas-, and x-arazzo are reserved for uses
 	// defined by the OpenAPI Initiative. The value MAY be null, a
 	// primitive, an array or an object.
-	Extensions map[string]any `json:"-,omitempty"         yaml:"-,omitempty"`
+	Extensions map[string]any `json:"-,omitempty"       yaml:"-,omitempty"`
 }
 
 // CriterionTypeOrCriterionExpressionType allows a criterion to use
@@ -642,18 +642,18 @@ func (c CriterionType) ToPtr() *CriterionType {
 type CriterionExpressionType struct {
 	// Required. The type of condition to be applied. The options
 	// allowed are jsonpath or xpath.
-	Type CriterionExpressionTypeType `json:"type"    yaml:"type"`
+	Type CriterionExpressionTypeType `json:"type"        yaml:"type"`
 	// Required. A short hand string representing the version of the
 	// expression type being used. The allowed values for JSONPath are
 	// draft-goessner-dispatch-jsonpath-00. The allowed values for
 	// XPath are xpath-30, xpath-20, or xpath-10.
-	Version string `json:"version" yaml:"version"`
+	Version string `json:"version"     yaml:"version"`
 	// Allows extensions to the Arazzo Specification. The field name
 	// MUST begin with x-, for example, x-internal-id. Field names
 	// beginning x-oai-, x-oas-, and x-arazzo are reserved for uses
 	// defined by the OpenAPI Initiative. The value MAY be null, a
 	// primitive, an array or an object.
-	Extensions map[string]any `json:"-,omitempty"       yaml:"-,omitempty"`
+	Extensions map[string]any `json:"-,omitempty" yaml:"-,omitempty"`
 }
 
 // CriterionExpressionTypeType is a string that represents the type of
@@ -678,10 +678,10 @@ const (
 type SuccessAction struct {
 	// Required. The name of the success action. Names are case
 	// sensitive.
-	Name string `json:"name"       yaml:"name"`
+	Name string `json:"name"                 yaml:"name"`
 	// Required. The type of action to take. Possible values are "end"
 	// or "goto".
-	Type SuccessActionType `json:"type"       yaml:"type"`
+	Type SuccessActionType `json:"type"                 yaml:"type"`
 	// The workflowId referencing an existing workflow within the
 	// Arazzo Description to transfer to upon success of the step.
 	// This field is only relevant when the type field value is
@@ -807,10 +807,10 @@ func (s SuccessActionOrReusable) MarshalYAML() (interface{}, error) {
 type FailureAction struct {
 	// Required. The name of the failure action. Names are case
 	// sensitive.
-	Name string `json:"name"       yaml:"name"`
+	Name string `json:"name"                 yaml:"name"`
 	// Required. The type of action to take. Possible values are
 	// "end", "retry", or "goto".
-	Type FailureActionType `json:"type"       yaml:"type"`
+	Type FailureActionType `json:"type"                 yaml:"type"`
 	// The workflowId referencing an existing workflow within the
 	// Arazzo Description to transfer to upon failure of the step.
 	// This field is only relevant when the type field value is "goto"
