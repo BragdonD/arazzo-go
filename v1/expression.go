@@ -6,34 +6,65 @@ import (
 	"strings"
 )
 
+// RuntimeExpressionLexerTokenType represents the type of tokens
+// recognized by the lexer.
 type RuntimeExpressionLexerTokenType int
 
+// Token types corresponding to specific runtime expressions as per
+// Arazzo ABNF syntax.
 const (
+	// Token corresponding to "$url" expression.
 	StepURLToken RuntimeExpressionLexerTokenType = iota
+	// Token corresponding to "$method" expression.
 	StepMethodToken
+	// Token corresponding to "$statusCode" expression.
 	StepStatusCodeToken
+	// Token corresponding to "$request." expression.
 	StepRequestToken
+	// Token corresponding to "$response." expression.
 	StepResponseToken
+	// Token corresponding to "$inputs." expression.
 	WorkflowInputsToken
+	// Token corresponding to "$outputs." expression.
 	WorkflowOutputsToken
+	// Token corresponding to "$steps." expression.
 	WorkflowStepsToken
+	// Token corresponding to "$workflows." expression.
 	DocumentWorkflowsToken
+	// Token corresponding to "$sourceDescriptions." expression.
 	DocumentSourceDescriptionsToken
+	// Token corresponding to "$components." expression.
 	DocumentComponentsToken
+	// Token corresponding to "$components.inputs." expression.
 	ComponentsInputsToken
+	// Token corresponding to "$components.parameters." expression.
 	ComponentsParametersToken
+	// Token corresponding to "$components.successActions."
+	// expression.
 	ComponentsSuccessActionsToken
+	// Token corresponding to "$components.failureActions."
+	// expression.
 	ComponentsFailureActionsToken
+	// Token corresponding to "header." expression.
 	HeaderToken
+	// Token corresponding to "query." expression.
 	QueryToken
+	// Token corresponding to "path." expression.
 	PathToken
+	// Token corresponding to "body" expression.
 	BodyToken
+	// Token corresponding to "#" expression.
 	JSONPointerStartToken
+	// Token corresponding to JSON Pointer reference.
 	JSONPointerReferenceToken
+	// Token corresponding to Name token as defined in ABNF syntax.
 	NameToken
+	// Token corresponding to Generic token as defined in ABNF syntax.
 	Token
 )
 
+// LexerTokenValue maps each token type to its corresponding string
+// representation.
 var LexerTokenValue = map[RuntimeExpressionLexerTokenType]string{
 	StepURLToken:                    ABNFExpressionURL,
 	StepMethodToken:                 ABNFExpressionMethod,
@@ -57,17 +88,23 @@ var LexerTokenValue = map[RuntimeExpressionLexerTokenType]string{
 	JSONPointerStartToken:           ABNFExpressionJSONPointer,
 }
 
+// LexerToken represents a token identified by the lexer, including
+// its type, value, and position in the input string.
 type LexerToken struct {
 	Type     RuntimeExpressionLexerTokenType
 	Value    string
 	Position int
 }
 
+// UnknownTokenError is an error type returned when the lexer
+// encounters an unrecognized token.
 type UnknownTokenError struct {
 	Value    string
 	Position int
 }
 
+// Error returns a formatted error message indicating the position and
+// value of the unknown token.
 func (e *UnknownTokenError) Error() string {
 	return fmt.Sprintf(
 		"arazzo-go: lexer: unknown character at pos: %d, its value is: %s",
@@ -76,16 +113,27 @@ func (e *UnknownTokenError) Error() string {
 	)
 }
 
+// tokenize splits the input string into a slice of LexerTokens based
+// on the Arazzo runtime expression syntax.
 func tokenize(input string) ([]LexerToken, error) {
 	tokens := []LexerToken{}
 	position := 0
 
+	// Compile regular expressions for matching names, tokens, and
+	// JSON Pointer references.
 	nameRe := regexp.MustCompile(ABNFNameRegex)
 	tokenRe := regexp.MustCompile(ABNFTokenRegex)
-	JSONPointerRe := regexp.MustCompile(ABNFJSONPointerReferenceTokenRegex)
+	JSONPointerRe := regexp.MustCompile(
+		ABNFJSONPointerReferenceTokenRegex,
+	)
 
+	// lexerStart is the main loop for tokenizing the input string. It
+	// checks for known token prefixes and processes them accordingly.
+	// If a token is matched, the loop continues to check for the next
+	// token.
 lexerStart:
 	for position < len(input) {
+		// Check for known token prefixes in the input string.
 		for tokenType, tokenValue := range LexerTokenValue {
 			if strings.HasPrefix(input[position:], tokenValue) {
 				tokens = append(tokens, LexerToken{
@@ -98,6 +146,7 @@ lexerStart:
 			}
 		}
 
+		// Match 'name' as defined in the ABNF syntax.
 		name := nameRe.FindString(input[position:])
 		if name != "" {
 			tokens = append(tokens, LexerToken{
@@ -109,6 +158,7 @@ lexerStart:
 			continue
 		}
 
+		// Match 'token' as defined in the ABNF syntax.
 		token := tokenRe.FindString(input[position:])
 		if token != "" {
 			tokens = append(tokens, LexerToken{
@@ -120,6 +170,8 @@ lexerStart:
 			continue
 		}
 
+		// Match JSON Pointer references as defined in the ABNF
+		// syntax.
 		jsonPointer := JSONPointerRe.FindString(input[position:])
 		if jsonPointer != "" {
 			tokens = append(tokens, LexerToken{
@@ -131,6 +183,7 @@ lexerStart:
 			continue
 		}
 
+		// Return an error if an unknown token is encountered.
 		return nil, &UnknownTokenError{
 			Value:    input[position:],
 			Position: position,
@@ -139,29 +192,3 @@ lexerStart:
 
 	return tokens, nil
 }
-
-// var ExpressionTokenName = map[ExpressionTokenType]string{
-// 	StepURLToken:                    "StepURLToken",
-// 	StepMethodToken:                 "StepMethodToken",
-// 	StepStatusCodeToken:             "StepStatusCodeToken",
-// 	StepRequestToken:                "StepRequestToken",
-// 	StepResponseToken:               "StepResponseToken",
-// 	WorkflowInputsToken:             "WorkflowInputsToken",
-// 	WorkflowOutputsToken:            "WorkflowOutputsToken",
-// 	DocumentWorkflowsToken:          "DocumentWorkflowsToken",
-// 	DocumentSourceDescriptionsToken: "DocumentSourceDescriptionsToken",
-// 	DocumentComponentsToken:         "DocumentComponentsToken",
-// 	ComponentsInputsToken:           "ComponentsInputsToken",
-// 	ComponentsParametersToken:       "ComponentsParametersToken",
-// 	ComponentsSuccessActionsToken:   "ComponentsSuccessActionsToken",
-// 	ComponentsFailureActionsToken:   "ComponentsFailureActionsToken",
-// 	HeaderToken:                     "HeaderToken",
-// 	QueryToken:                      "QueryToken",
-// 	PathToken:                       "PathToken",
-// 	BodyToken:                       "BodyToken",
-// }
-
-// type ParserToken struct {
-// 	Type  ExpressionTokenType
-// 	Value string
-// }
