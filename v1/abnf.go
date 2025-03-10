@@ -32,33 +32,41 @@ const (
 	ABNFExpressionInputs = "$inputs."
 	// Prefix for accessing workflow output parameters.
 	ABNFExpressionOutputs = "$outputs."
-	// Prefix for accessing outputs of specific steps within a workflow.
+	// Prefix for accessing outputs of specific steps within a
+	// workflow.
 	ABNFExpressionSteps = "$steps."
 	// Prefix for accessing workflows within the Arazzo document.
 	ABNFExpressionWorkflows = "$workflows."
-	// Prefix for accessing source descriptions within the Arazzo document.
+	// Prefix for accessing source descriptions within the Arazzo
+	// document.
 	ABNFExpressionSourceDescriptions = "$sourceDescriptions."
 	// Prefix for accessing components within the Arazzo document.
 	ABNFExpressionComponents = "$components."
 )
 
 const (
-	// Prefix for accessing input components within the Arazzo document.
+	// Prefix for accessing input components within the Arazzo
+	// document.
 	ABNFExpressionComponentsInputs = "$components.inputs."
-	// Prefix for accessing parameter components within the Arazzo document.
+	// Prefix for accessing parameter components within the Arazzo
+	// document.
 	ABNFExpressionComponentsParameters = "$components.parameters."
-	// Prefix for accessing success action components within the Arazzo document.
+	// Prefix for accessing success action components within the
+	// Arazzo document.
 	ABNFExpressionComponentsSuccessActions = "$components.successActions."
-	// Prefix for accessing failure action components within the Arazzo document.
+	// Prefix for accessing failure action components within the
+	// Arazzo document.
 	ABNFExpressionComponentsFailureActions = "$components.failureActions."
 )
 
 const (
 	// Regular expression pattern for valid 'name' as per ABNF.
 	ABNFNameRegex = `^[a-zA-Z0-9_.-]+`
-	// Regular expression pattern for escaped characters in JSON Pointer.
+	// Regular expression pattern for escaped characters in JSON
+	// Pointer.
 	ABNFEscapedRegex = `~[01]`
-	// Regular expression pattern for unescaped characters in JSON Pointer.
+	// Regular expression pattern for unescaped characters in JSON
+	// Pointer.
 	ABNFUnescapedRegex = `[\x00-\x2E\x30-\x7D\x7F-\x{10FFFF}]`
 	// Characters allowed in 'token' as per ABNF.
 	ABNFTokenChars = "!#$%&'*+-.^_`|~0-9a-zA-Z"

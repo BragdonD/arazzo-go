@@ -13,14 +13,22 @@ func TestTokenize(t *testing.T) {
 		{
 			input: ABNFExpressionURL,
 			expected: []LexerToken{
-				{Type: StepURLToken, Value: ABNFExpressionURL, Position: 0},
+				{
+					Type:     StepURLToken,
+					Value:    ABNFExpressionURL,
+					Position: 0,
+				},
 			},
 			error: false,
 		},
 		{
 			input: ABNFExpressionMethod,
 			expected: []LexerToken{
-				{Type: StepMethodToken, Value: ABNFExpressionMethod, Position: 0},
+				{
+					Type:     StepMethodToken,
+					Value:    ABNFExpressionMethod,
+					Position: 0,
+				},
 			},
 			error: false,
 		},
@@ -34,73 +42,125 @@ func TestTokenize(t *testing.T) {
 		{
 			input: ABNFExpressionURL + ABNFExpressionMethod,
 			expected: []LexerToken{
-				{Type: StepURLToken, Value: ABNFExpressionURL, Position: 0},
-				{Type: StepMethodToken, Value: ABNFExpressionMethod, Position: len(ABNFExpressionURL)},
+				{
+					Type:     StepURLToken,
+					Value:    ABNFExpressionURL,
+					Position: 0,
+				},
+				{
+					Type:     StepMethodToken,
+					Value:    ABNFExpressionMethod,
+					Position: len(ABNFExpressionURL),
+				},
 			},
 			error: false,
 		},
 		{
 			input: ABNFExpressionStatusCode,
 			expected: []LexerToken{
-				{Type: StepStatusCodeToken, Value: ABNFExpressionStatusCode, Position: 0},
+				{
+					Type:     StepStatusCodeToken,
+					Value:    ABNFExpressionStatusCode,
+					Position: 0,
+				},
 			},
 			error: false,
 		},
 		{
 			input: ABNFExpressionRequest,
 			expected: []LexerToken{
-				{Type: StepRequestToken, Value: ABNFExpressionRequest, Position: 0},
+				{
+					Type:     StepRequestToken,
+					Value:    ABNFExpressionRequest,
+					Position: 0,
+				},
 			},
 			error: false,
 		},
 		{
 			input: ABNFExpressionResponse,
 			expected: []LexerToken{
-				{Type: StepResponseToken, Value: ABNFExpressionResponse, Position: 0},
+				{
+					Type:     StepResponseToken,
+					Value:    ABNFExpressionResponse,
+					Position: 0,
+				},
 			},
 			error: false,
 		},
 		{
 			input: ABNFExpressionInputs,
 			expected: []LexerToken{
-				{Type: WorkflowInputsToken, Value: ABNFExpressionInputs, Position: 0},
+				{
+					Type:     WorkflowInputsToken,
+					Value:    ABNFExpressionInputs,
+					Position: 0,
+				},
 			},
 			error: false,
 		},
 		{
 			input: ABNFExpressionOutputs,
 			expected: []LexerToken{
-				{Type: WorkflowOutputsToken, Value: ABNFExpressionOutputs, Position: 0},
+				{
+					Type:     WorkflowOutputsToken,
+					Value:    ABNFExpressionOutputs,
+					Position: 0,
+				},
 			},
 			error: false,
 		},
 		{
 			input: ABNFExpressionHeader + ABNFExpressionQuery,
 			expected: []LexerToken{
-				{Type: HeaderToken, Value: ABNFExpressionHeader, Position: 0},
-				{Type: QueryToken, Value: ABNFExpressionQuery, Position: len(ABNFExpressionHeader)},
+				{
+					Type:     HeaderToken,
+					Value:    ABNFExpressionHeader,
+					Position: 0,
+				},
+				{
+					Type:     QueryToken,
+					Value:    ABNFExpressionQuery,
+					Position: len(ABNFExpressionHeader),
+				},
 			},
 			error: false,
 		},
 		{
 			input: ABNFExpressionPath + ABNFExpressionBody,
 			expected: []LexerToken{
-				{Type: PathToken, Value: ABNFExpressionPath, Position: 0},
-				{Type: BodyToken, Value: ABNFExpressionBody, Position: len(ABNFExpressionPath)},
+				{
+					Type:     PathToken,
+					Value:    ABNFExpressionPath,
+					Position: 0,
+				},
+				{
+					Type:     BodyToken,
+					Value:    ABNFExpressionBody,
+					Position: len(ABNFExpressionPath),
+				},
 			},
 			error: false,
 		},
 		{
 			input: ABNFExpressionJSONPointer,
 			expected: []LexerToken{
-				{Type: JSONPointerStartToken, Value: ABNFExpressionJSONPointer, Position: 0},
+				{
+					Type:     JSONPointerStartToken,
+					Value:    ABNFExpressionJSONPointer,
+					Position: 0,
+				},
 			},
 			error: false,
 		},
 		{
 			input: "/foo/bar",
 			expected: []LexerToken{
-				{Type: JSONPointerReferenceToken, Value: "/foo/bar", Position: 0},
+				{
+					Type:     JSONPointerReferenceToken,
+					Value:    "/foo/bar",
+					Position: 0,
+				},
 			},
 			error: false,
 		},
@@ -110,7 +170,10 @@ func TestTokenize(t *testing.T) {
 		tokens, err := tokenize(test.input)
 		if test.error {
 			if err == nil {
-				t.Errorf("Expected error for input %q, got none", test.input)
+				t.Errorf(
+					"Expected error for input %q, got none",
+					test.input,
+				)
 			}
 		} else {
 			if err != nil {

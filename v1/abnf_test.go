@@ -15,10 +15,22 @@ func TestABNFNameRegex(t *testing.T) {
 		{"name_with_underscore", "name_with_underscore"},
 		{"name-with-dash", "name-with-dash"},
 		{"name.with.dot", "name.with.dot"},
-		{"name with space", "name"},         // Extracts only valid prefix
-		{"123valid_name!", "123valid_name"}, // Extracts valid part before `!`
-		{"!invalidStart", ""},               // No valid match at the beginning
-		{"", ""},                            // No match for empty string
+		{
+			"name with space",
+			"name",
+		}, // Extracts only valid prefix
+		{
+			"123valid_name!",
+			"123valid_name",
+		}, // Extracts valid part before `!`
+		{
+			"!invalidStart",
+			"",
+		}, // No valid match at the beginning
+		{
+			"",
+			"",
+		}, // No match for empty string
 	}
 
 	re := regexp.MustCompile(`^[a-zA-Z0-9_.-]+`)
@@ -26,7 +38,12 @@ func TestABNFNameRegex(t *testing.T) {
 		t.Run(test.input, func(t *testing.T) {
 			match := re.FindString(test.input)
 			if match != test.expected {
-				t.Errorf("For input '%s', expected '%s' but got '%s'", test.input, test.expected, match)
+				t.Errorf(
+					"For input '%s', expected '%s' but got '%s'",
+					test.input,
+					test.expected,
+					match,
+				)
 			}
 		})
 	}
@@ -46,7 +63,12 @@ func TestABNFEscapedRegex(t *testing.T) {
 	for _, test := range tests {
 		match := re.MatchString(test.input)
 		if match != test.expected {
-			t.Errorf("For input '%s', expected %v but got %v", test.input, test.expected, match)
+			t.Errorf(
+				"For input '%s', expected %v but got %v",
+				test.input,
+				test.expected,
+				match,
+			)
 		}
 	}
 }
@@ -68,7 +90,12 @@ func TestABNFUnescapedRegex(t *testing.T) {
 	for _, test := range tests {
 		match := re.MatchString(test.input)
 		if match != test.expected {
-			t.Errorf("For input '%s', expected %v but got %v", test.input, test.expected, match)
+			t.Errorf(
+				"For input '%s', expected %v but got %v",
+				test.input,
+				test.expected,
+				match,
+			)
 		}
 	}
 }
@@ -81,11 +108,26 @@ func TestABNFTokenRegex(t *testing.T) {
 		{"token", "token"},
 		{"token123", "token123"},
 		{"!#$%&'*+-.^_`|~", "!#$%&'*+-.^_`|~"},
-		{"invalid token", "invalid"},        // Extracts valid part before space
-		{"123token!", "123token!"},          // Full match since all chars are valid
-		{"   leadingSpace", ""},             // No match because it starts with a space
-		{"trailingSpace ", "trailingSpace"}, // Extracts valid part before space
-		{"", ""},                            // Empty string should not match
+		{
+			"invalid token",
+			"invalid",
+		}, // Extracts valid part before space
+		{
+			"123token!",
+			"123token!",
+		}, // Full match since all chars are valid
+		{
+			"   leadingSpace",
+			"",
+		}, // No match because it starts with a space
+		{
+			"trailingSpace ",
+			"trailingSpace",
+		}, // Extracts valid part before space
+		{
+			"",
+			"",
+		}, // Empty string should not match
 	}
 
 	re := regexp.MustCompile(ABNFTokenRegex)
@@ -94,7 +136,12 @@ func TestABNFTokenRegex(t *testing.T) {
 		t.Run(test.input, func(t *testing.T) {
 			match := re.FindString(test.input)
 			if match != test.expected {
-				t.Errorf("For input '%s', expected '%s' but got '%s'", test.input, test.expected, match)
+				t.Errorf(
+					"For input '%s', expected '%s' but got '%s'",
+					test.input,
+					test.expected,
+					match,
+				)
 			}
 		})
 	}
