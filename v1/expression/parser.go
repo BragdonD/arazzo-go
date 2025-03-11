@@ -50,6 +50,7 @@ func (p *Parser) expression() (Expr, error) {
 		ComponentsParametersToken, ComponentsSuccessActionsToken,
 	) {
 		value := p.previous().Value
+		fmt.Println(value)
 		expr, err := p.expressionWithName()
 		if err != nil {
 			return nil, err
@@ -103,7 +104,7 @@ func (p *Parser) expressionWithSource() (SourceNode, error) {
 
 // expressionWithName parses an expression with a name.
 func (p *Parser) expressionWithName() (*NameNode, error) {
-	if p.match(NameToken) {
+	if p.match(NameToken, NameOrToken) {
 		return &NameNode{
 			Value: p.peek().Value,
 		}, nil
@@ -117,7 +118,7 @@ func (p *Parser) expressionWithName() (*NameNode, error) {
 
 // headerReference parses a header reference.
 func (p *Parser) headerReference() (SourceNode, error) {
-	if p.match(Token) {
+	if p.match(Token, NameOrToken) {
 		token, err := p.token()
 		if err != nil {
 			return nil, err

@@ -61,6 +61,10 @@ const (
 	NameToken
 	// Token corresponding to Generic token as defined in ABNF syntax.
 	Token
+	// NameOrToken represents a token that can be either a name or a
+	// generic token. This is necessary because the regex for names
+	// and tokens share some common patterns.
+	NameOrToken
 )
 
 // LexerTokenValue maps each token type to its corresponding string
@@ -149,6 +153,17 @@ lexerStart:
 		// Match 'token' as defined in the ABNF syntax.
 		token := tokenRe.FindString(input[position:])
 		if token != "" {
+			name := nameRe.FindString(input[position:])
+			if name != "" {
+				tokens = append(tokens, LexerToken{
+					Type:     NameOrToken,
+					Value:    name,
+					Position: position,
+				})
+				position += len(name)
+				continue
+			}
+
 			tokens = append(tokens, LexerToken{
 				Type:     Token,
 				Value:    token,

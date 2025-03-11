@@ -5,7 +5,7 @@ import (
 )
 
 func TestParser(t *testing.T) {
-	tokens, err := tokenize("$request.header.x")
+	tokens, err := tokenize("$workflows.foo.steps.bar")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
