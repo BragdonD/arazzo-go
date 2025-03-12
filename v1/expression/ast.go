@@ -138,7 +138,7 @@ func (n *PathReferenceNode) Accept(visitor Visitor) any {
 // JSON pointer.
 type BodyReferenceNode struct {
 	Value            string
-	JSONPointerStart rune
+	JSONPointerStart string
 	JSONPointer      *JSONPointerNode
 }
 
@@ -265,7 +265,7 @@ func (ast *ASTPrinter) VisitBodyReferenceNode(
 ) any {
 	if n.JSONPointer != nil {
 		return ast.parenthesize(
-			n.Value+" "+string(n.JSONPointerStart),
+			n.Value+" "+n.JSONPointerStart,
 			n.JSONPointer,
 		)
 	}

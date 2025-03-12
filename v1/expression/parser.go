@@ -50,7 +50,6 @@ func (p *Parser) expression() (Expr, error) {
 		ComponentsParametersToken, ComponentsSuccessActionsToken,
 	) {
 		value := p.previous().Value
-		fmt.Println(value)
 		expr, err := p.expressionWithName()
 		if err != nil {
 			return nil, err
@@ -73,11 +72,11 @@ func (p *Parser) singleExpression() (Expr, error) {
 	if !p.isAtEnd() {
 		return nil, fmt.Errorf(
 			"'%s' is a token with no children node",
-			p.peek().Value,
+			p.previous().Value,
 		)
 	}
 	return &SingleExpressionNode{
-		Value: p.peek().Value,
+		Value: p.previous().Value,
 	}, nil
 }
 
@@ -105,9 +104,7 @@ func (p *Parser) expressionWithSource() (SourceNode, error) {
 // expressionWithName parses an expression with a name.
 func (p *Parser) expressionWithName() (*NameNode, error) {
 	if p.match(NameToken, NameOrToken) {
-		return &NameNode{
-			Value: p.peek().Value,
-		}, nil
+		return p.name()
 	}
 	return nil, fmt.Errorf(
 		"token at %d should be an expression with a name token, instead it is a '%s' token",
@@ -118,13 +115,14 @@ func (p *Parser) expressionWithName() (*NameNode, error) {
 
 // headerReference parses a header reference.
 func (p *Parser) headerReference() (SourceNode, error) {
+	header := p.previous().Value
 	if p.match(Token, NameOrToken) {
 		token, err := p.token()
 		if err != nil {
 			return nil, err
 		}
 		return &HeaderReferenceNode{
-			Value: p.previous().Value,
+			Value: header,
 			Token: *token,
 		}, nil
 	}
@@ -137,13 +135,14 @@ func (p *Parser) headerReference() (SourceNode, error) {
 
 // queryReference parses a query reference.
 func (p *Parser) queryReference() (SourceNode, error) {
-	if p.match(NameToken) {
+	query := p.previous().Value
+	if p.match(NameToken, NameOrToken) {
 		name, err := p.name()
 		if err != nil {
 			return nil, err
 		}
 		return &QueryReferenceNode{
-			Value: p.previous().Value,
+			Value: query,
 			Name:  *name,
 		}, nil
 	}
@@ -156,13 +155,14 @@ func (p *Parser) queryReference() (SourceNode, error) {
 
 // pathReference parses a path reference.
 func (p *Parser) pathReference() (SourceNode, error) {
-	if p.match(NameToken) {
+	path := p.previous().Value
+	if p.match(NameToken, NameOrToken) {
 		name, err := p.name()
 		if err != nil {
 			return nil, err
 		}
 		return &PathReferenceNode{
-			Value: p.previous().Value,
+			Value: path,
 			Name:  *name,
 		}, nil
 	}
@@ -175,14 +175,18 @@ func (p *Parser) pathReference() (SourceNode, error) {
 
 // bodyReference parses a body reference.
 func (p *Parser) bodyReference() (SourceNode, error) {
+	body := p.previous().Value
 	if p.match(JSONPointerStartToken) {
+		jsonPointerStart := p.previous().Value
 		if p.match(JSONPointerReferenceToken) {
+			jsonPointer, err := p.jsonPointer()
+			if err != nil {
+				return nil, err
+			}
 			return &BodyReferenceNode{
-				Value:            p.previous().Value,
-				JSONPointerStart: '#',
-				JSONPointer: &JSONPointerNode{
-					Value: p.peek().Value,
-				},
+				Value:            body,
+				JSONPointerStart: jsonPointerStart,
+				JSONPointer:      jsonPointer,
 			}, nil
 		}
 	}
@@ -198,11 +202,12 @@ func (p *Parser) name() (*NameNode, error) {
 	if !p.isAtEnd() {
 		return nil, fmt.Errorf(
 			"'%s' is a token with no children node",
-			p.peek().Value,
+			p.previous().Value,
 		)
 	}
+	fmt.Println(p.previous().Value, p.isAtEnd(), p.current, len(p.tokens))
 	return &NameNode{
-		Value: p.peek().Value,
+		Value: p.previous().Value,
 	}, nil
 }
 
@@ -211,11 +216,24 @@ func (p *Parser) token() (*TokenNode, error) {
 	if !p.isAtEnd() {
 		return nil, fmt.Errorf(
 			"'%s' is a token with no children node",
-			p.peek().Value,
+			p.previous().Value,
 		)
 	}
 	return &TokenNode{
-		Value: p.peek().Value,
+		Value: p.previous().Value,
+	}, nil
+}
+
+// jsonPointer parses a JSON Pointer.
+func (p *Parser) jsonPointer() (*JSONPointerNode, error) {
+	if !p.isAtEnd() {
+		return nil, fmt.Errorf(
+			"'%s' is a token with no children node",
+			p.previous().Value,
+		)
+	}
+	return &JSONPointerNode{
+		Value: p.previous().Value,
 	}, nil
 }
 
@@ -245,7 +263,7 @@ func (p *Parser) advance() LexerToken {
 
 // isAtEnd checks if the parser has reached the end of the tokens.
 func (p *Parser) isAtEnd() bool {
-	return p.current+1 == len(p.tokens)
+	return p.current == len(p.tokens)
 }
 
 // peek returns the current token.

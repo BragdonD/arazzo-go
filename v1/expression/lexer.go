@@ -6,6 +6,16 @@ import (
 	"strings"
 )
 
+type Lexer struct {
+	input string
+}
+
+func NewLexer(input string) *Lexer {
+	return &Lexer{
+		input: input,
+	}
+}
+
 // RuntimeExpressionLexerTokenType represents the type of tokens
 // recognized by the lexer.
 type LexerTokenType int
@@ -33,8 +43,6 @@ const (
 	DocumentWorkflowsToken
 	// Token corresponding to "$sourceDescriptions." expression.
 	DocumentSourceDescriptionsToken
-	// Token corresponding to "$components." expression.
-	DocumentComponentsToken
 	// Token corresponding to "$components.inputs." expression.
 	ComponentsInputsToken
 	// Token corresponding to "$components.parameters." expression.
@@ -45,6 +53,8 @@ const (
 	// Token corresponding to "$components.failureActions."
 	// expression.
 	ComponentsFailureActionsToken
+	// Token corresponding to "$components." expression.
+	DocumentComponentsToken
 	// Token corresponding to "header." expression.
 	HeaderToken
 	// Token corresponding to "query." expression.
@@ -80,11 +90,11 @@ var LexerTokenValue = map[LexerTokenType]string{
 	WorkflowStepsToken:              ABNFExpressionSteps,
 	DocumentWorkflowsToken:          ABNFExpressionWorkflows,
 	DocumentSourceDescriptionsToken: ABNFExpressionSourceDescriptions,
-	DocumentComponentsToken:         ABNFExpressionComponents,
 	ComponentsInputsToken:           ABNFExpressionComponentsInputs,
 	ComponentsParametersToken:       ABNFExpressionComponentsParameters,
 	ComponentsSuccessActionsToken:   ABNFExpressionComponentsSuccessActions,
 	ComponentsFailureActionsToken:   ABNFExpressionComponentsFailureActions,
+	DocumentComponentsToken:         ABNFExpressionComponents,
 	HeaderToken:                     ABNFExpressionHeader,
 	QueryToken:                      ABNFExpressionQuery,
 	PathToken:                       ABNFExpressionPath,
@@ -119,7 +129,7 @@ func (e *UnknownTokenError) Error() string {
 
 // tokenize splits the input string into a slice of LexerTokens based
 // on the Arazzo runtime expression syntax.
-func tokenize(input string) ([]LexerToken, error) {
+func (l *Lexer) Tokenize() ([]LexerToken, error) {
 	tokens := []LexerToken{}
 	position := 0
 
@@ -136,10 +146,10 @@ func tokenize(input string) ([]LexerToken, error) {
 	// If a token is matched, the loop continues to check for the next
 	// token.
 lexerStart:
-	for position < len(input) {
+	for position < len(l.input) {
 		// Check for known token prefixes in the input string.
 		for tokenType, tokenValue := range LexerTokenValue {
-			if strings.HasPrefix(input[position:], tokenValue) {
+			if strings.HasPrefix(l.input[position:], tokenValue) {
 				tokens = append(tokens, LexerToken{
 					Type:     tokenType,
 					Value:    tokenValue,
@@ -151,9 +161,9 @@ lexerStart:
 		}
 
 		// Match 'token' as defined in the ABNF syntax.
-		token := tokenRe.FindString(input[position:])
+		token := tokenRe.FindString(l.input[position:])
 		if token != "" {
-			name := nameRe.FindString(input[position:])
+			name := nameRe.FindString(l.input[position:])
 			if name != "" {
 				tokens = append(tokens, LexerToken{
 					Type:     NameOrToken,
@@ -174,7 +184,7 @@ lexerStart:
 		}
 
 		// Match 'name' as defined in the ABNF syntax.
-		name := nameRe.FindString(input[position:])
+		name := nameRe.FindString(l.input[position:])
 		if name != "" {
 			tokens = append(tokens, LexerToken{
 				Type:     NameToken,
@@ -187,7 +197,7 @@ lexerStart:
 
 		// Match JSON Pointer references as defined in the ABNF
 		// syntax.
-		jsonPointer := JSONPointerRe.FindString(input[position:])
+		jsonPointer := JSONPointerRe.FindString(l.input[position:])
 		if jsonPointer != "" {
 			tokens = append(tokens, LexerToken{
 				Type:     JSONPointerReferenceToken,
@@ -200,7 +210,7 @@ lexerStart:
 
 		// Return an error if an unknown token is encountered.
 		return nil, &UnknownTokenError{
-			Value:    input[position:],
+			Value:    l.input[position:],
 			Position: position,
 		}
 	}
