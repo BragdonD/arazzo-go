@@ -11,18 +11,50 @@ func TestParser(t *testing.T) {
 		err      bool
 	}{
 		{"$method", "$method", false},
-		{"$request.header.accept", "($request. (header. accept))", false},
+		{
+			"$request.header.accept",
+			"($request. (header. accept))",
+			false,
+		},
 		{"$request.path.id", "($request. (path. id))", false},
-		{"$request.body#/user/uuid", "($request. (body # /user/uuid))", false},
+		{
+			"$request.body#/user/uuid",
+			"($request. (body # /user/uuid))",
+			false,
+		},
 		{"$url", "$url", false},
-		{"$response.body#/status", "($response. (body # /status))", false},
-		{"$response.header.Server", "($response. (header. Server))", false},
+		{
+			"$response.body#/status",
+			"($response. (body # /status))",
+			false,
+		},
+		{
+			"$response.header.Server",
+			"($response. (header. Server))",
+			false,
+		},
 		{"$inputs.username", "($inputs. username)", false},
-		{"$workflows.foo.inputs.username", "($workflows. foo.inputs.username)", false},
-		{"$steps.someStepId.outputs.pets", "($steps. someStepId.outputs.pets)", false},
+		{
+			"$workflows.foo.inputs.username",
+			"($workflows. foo.inputs.username)",
+			false,
+		},
+		{
+			"$steps.someStepId.outputs.pets",
+			"($steps. someStepId.outputs.pets)",
+			false,
+		},
 		{"$outputs.bar", "($outputs. bar)", false},
-		{"$workflows.foo.outputs.bar", "($workflows. foo.outputs.bar)", false},
-		{"$components.parameters.foo", "($components.parameters. foo)", false},
+		{
+			"$workflows.foo.outputs.bar",
+			"($workflows. foo.outputs.bar)",
+			false,
+		},
+		{
+			"$components.parameters.foo",
+			"($components.parameters. foo)",
+			false,
+		},
 	}
 
 	for _, test := range tests {
@@ -48,7 +80,11 @@ func TestParser(t *testing.T) {
 			printer := &ASTPrinter{}
 			str := printer.Stringify(expr)
 			if str != test.expected {
-				t.Fatalf("expected '%s', got '%s'", test.expected, str)
+				t.Fatalf(
+					"expected '%s', got '%s'",
+					test.expected,
+					str,
+				)
 			}
 		})
 	}

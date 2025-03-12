@@ -205,7 +205,6 @@ func (p *Parser) name() (*NameNode, error) {
 			p.previous().Value,
 		)
 	}
-	fmt.Println(p.previous().Value, p.isAtEnd(), p.current, len(p.tokens))
 	return &NameNode{
 		Value: p.previous().Value,
 	}, nil
