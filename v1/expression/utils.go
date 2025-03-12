@@ -8,13 +8,13 @@ func Parse(input string) (Expr, error) {
 	lexer := NewLexer(input)
 	tokens, err := lexer.Tokenize()
 	if err != nil {
-		panic(fmt.Sprintf("unexpected error: %v", err))
+		return nil, fmt.Errorf("failed to tokenize input: %w", err)
 	}
 
 	parser := NewParser(tokens)
 	expr, err := parser.Parse()
 	if err != nil {
-		panic(fmt.Sprintf("unexpected error: %v", err))
+		return nil, fmt.Errorf("failed to parse tokens: %w", err)
 	}
 
 	return expr, nil
