@@ -13,6 +13,7 @@ The `arazzo-go/v1/expression` subpackage provides functionality for parsing Araz
 - [Arazzo Runtime Expression Syntax](#arazzo-runtime-expression-syntax)
 - [Contributing](#contributing)
 - [License](#license)
+- [Acknowledgements](#acknowledgements)
 
 ## Introduction
 
@@ -161,3 +162,7 @@ Contributions are welcome! Please see the [CONTRIBUTING.md](../../CONTRIBUTING.m
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](../../LICENSE) file for details.
+
+## Acknowledgements
+
+This package is based on the [Arazzo Specification](https://spec.openapis.org/arazzo/latest.html) and the [Crafting Interpreters](https://craftinginterpreters.com/contents.html) book by Robert Nystrom.
