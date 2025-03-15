@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"net/http"
@@ -10,6 +11,7 @@ import (
 
 	"github.com/pb33f/libopenapi"
 	oai31 "github.com/pb33f/libopenapi/datamodel/high/v3"
+	"github.com/pb33f/libopenapi/orderedmap"
 )
 
 const (
@@ -34,6 +36,7 @@ type OAIOperation struct {
 	ServerUrl string
 	Path      string
 	Method    HTTPMethod
+	Operation *oai31.Operation
 }
 
 func LoadOpenAPISource(oaiUrl string) (*libopenapi.DocumentModel[oai31.Document], error) {
@@ -64,6 +67,52 @@ func LoadOpenAPISource(oaiUrl string) (*libopenapi.DocumentModel[oai31.Document]
 	model, errs := openapiDoc.BuildV3Model()
 
 	return model, errors.Join(errs...)
+}
+
+func ExtractOperationsFromOpenAPI(oaiDoc *libopenapi.DocumentModel[oai31.Document]) ([]OAIOperation, error) {
+	operations := []OAIOperation{}
+
+	if oaiDoc == nil {
+		return operations, fmt.Errorf("openapi document is nil")
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	c := orderedmap.Iterate(ctx, oaiDoc.Model.Paths.PathItems)
+
+	for pair := range c {
+		path := pair.Key()
+		pathItem := pair.Value()
+
+		if pathItem == nil {
+			continue
+		}
+
+		methods := map[HTTPMethod]*oai31.Operation{
+			MethodGet:     pathItem.Get,
+			MethodHead:    pathItem.Head,
+			MethodPost:    pathItem.Post,
+			MethodPut:     pathItem.Put,
+			MethodPatch:   pathItem.Patch,
+			MethodDelete:  pathItem.Delete,
+			MethodOptions: pathItem.Options,
+			MethodTrace:   pathItem.Trace,
+		}
+
+		for method, operation := range methods {
+			if operation != nil {
+				operations = append(operations, OAIOperation{
+					ServerUrl: oaiDoc.Model.Servers[0].URL,
+					Path:      path,
+					Method:    method,
+					Operation: operation,
+				})
+			}
+		}
+	}
+
+	return operations, nil
 }
 
 func GetOperationById(operationId string, oaiDoc *libopenapi.DocumentModel[oai31.Document]) {
