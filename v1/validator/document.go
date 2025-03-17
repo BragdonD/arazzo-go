@@ -1,6 +1,9 @@
 package validator
 
 import (
+	"encoding/json"
+	"strings"
+
 	arazzo "github.com/bragdonD/arazzo-go/v1"
 	"github.com/bragdonD/arazzo-go/v1/validator/helpers"
 	"github.com/santhosh-tekuri/jsonschema/v6"
@@ -19,10 +22,17 @@ func ValidateArazzoDocument(doc *arazzo.Spec) (bool, []error) {
 		return false, []error{err}
 	}
 
-	scErrs := jsch.Validate(doc)
+	loadedSchema, err := json.Marshal(doc)
+	if err != nil {
+		return false, []error{err}
+	}
+
+	decodedSchema, _ := jsonschema.UnmarshalJSON(strings.NewReader(string(loadedSchema)))
+
+	scErrs := jsch.Validate(decodedSchema)
 
 	if scErrs != nil {
-		// TODO: handle errors
+		return false, []error{scErrs}
 	}
 	return true, nil
 }
