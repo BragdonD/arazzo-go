@@ -9,39 +9,39 @@ import (
 	"time"
 )
 
-// Loader handles file loading with configurable options.
+// Loader handles file loading with configurable LoaderOptions.
 type Loader struct {
 	httpClient  *http.Client
 	allowRemote bool
 	allowLocal  bool
 }
 
-// Option defines a functional option for configuring Loader.
-type Option func(*Loader)
+// LoaderOption defines a functional LoaderOption for configuring Loader.
+type LoaderOption func(*Loader)
 
 // WithHTTPClient sets a custom HTTP client.
-func WithHTTPClient(client *http.Client) Option {
+func WithHTTPClient(client *http.Client) LoaderOption {
 	return func(l *Loader) {
 		l.httpClient = client
 	}
 }
 
 // AllowRemoteLookup enables remote file loading.
-func AllowRemoteLookup() Option {
+func AllowRemoteLookup() LoaderOption {
 	return func(l *Loader) {
 		l.allowRemote = true
 	}
 }
 
 // AllowLocalLookup enables local file loading.
-func AllowLocalLookup() Option {
+func AllowLocalLookup() LoaderOption {
 	return func(l *Loader) {
 		l.allowLocal = true
 	}
 }
 
-// NewLoader creates a new Loader with optional configurations.
-func NewLoader(opts ...Option) *Loader {
+// NewLoader creates a new Loader with LoaderOptional configurations.
+func NewLoader(opts ...LoaderOption) *Loader {
 	l := &Loader{
 		httpClient:  &http.Client{Timeout: 10 * time.Second},
 		allowRemote: false,
