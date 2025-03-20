@@ -5,42 +5,6 @@ import (
 	"errors"
 )
 
-// ParameterOrReusable allows a step to use either a [Parameter] or
-// a [Reusable] object.
-type ParameterOrReusable struct {
-	Parameter *Parameter `json:",omitempty"`
-	Reusable  *Reusable  `json:",omitempty"`
-}
-
-// UnmarshalJSON implements json.Unmarshaler interface.
-func (p *ParameterOrReusable) UnmarshalJSON(data []byte) error {
-	var param Parameter
-	if err := json.Unmarshal(data, &param); err == nil {
-		p.Parameter = &param
-		return nil
-	}
-
-	var reusable Reusable
-	if err := json.Unmarshal(data, &reusable); err == nil {
-		p.Reusable = &reusable
-		return nil
-	}
-	return errors.New(
-		"data does not match any of the allowed types (Parameter, Reusable)",
-	)
-}
-
-// MarshalJSON implements json.Marshaler interface.
-func (p ParameterOrReusable) MarshalJSON() ([]byte, error) {
-	if p.Parameter != nil {
-		return json.Marshal(p.Parameter)
-	}
-	if p.Reusable != nil {
-		return json.Marshal(p.Reusable)
-	}
-	return nil, errors.New("no data to marshal")
-}
-
 // Parameter is a struct that represents an Arazzo specification 1.0.X
 // parameter object.
 //
@@ -97,4 +61,52 @@ const (
 
 func (p ParameterLocation) ToPtr() *ParameterLocation {
 	return &p
+}
+
+// ParameterOrReusable allows a step to use either a [Parameter] or
+// a [Reusable] object.
+type ParameterOrReusable struct {
+	Parameter *Parameter `json:",omitempty"`
+	Reusable  *Reusable  `json:",omitempty"`
+}
+
+// UnmarshalJSON implements json.Unmarshaler interface.
+func (p *ParameterOrReusable) UnmarshalJSON(data []byte) error {
+	var param Parameter
+	if err := json.Unmarshal(data, &param); err == nil {
+		p.Parameter = &param
+		return nil
+	}
+
+	var reusable Reusable
+	if err := json.Unmarshal(data, &reusable); err == nil {
+		p.Reusable = &reusable
+		return nil
+	}
+	return errors.New(
+		"data does not match any of the allowed types (Parameter, Reusable)",
+	)
+}
+
+// MarshalJSON implements json.Marshaler interface.
+func (p ParameterOrReusable) MarshalJSON() ([]byte, error) {
+	if p.Parameter != nil {
+		return json.Marshal(p.Parameter)
+	}
+	if p.Reusable != nil {
+		return json.Marshal(p.Reusable)
+	}
+	return nil, errors.New("no data to marshal")
+}
+
+func (pr *ParameterOrReusable) ToParameter(components *Components) (*Parameter, error) {
+	if pr.Parameter != nil {
+		return pr.Parameter, nil
+	}
+
+	if pr.Reusable == nil {
+		return nil, errors.New("no data to marshal")
+	}
+
+	return pr.Reusable.ToParameter(components)
 }
