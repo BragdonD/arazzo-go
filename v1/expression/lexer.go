@@ -3,6 +3,7 @@ package expression
 import (
 	"fmt"
 	"regexp"
+	"sort"
 	"strings"
 )
 
@@ -18,7 +19,7 @@ func NewLexer(input string) *Lexer {
 
 // RuntimeExpressionLexerTokenType represents the type of tokens
 // recognized by the lexer.
-type LexerTokenType int
+type LexerTokenType = int
 
 // Token types corresponding to specific runtime expressions as per
 // Arazzo ABNF syntax.
@@ -141,6 +142,12 @@ func (l *Lexer) Tokenize() ([]LexerToken, error) {
 		ABNFJSONPointerReferenceTokenRegex,
 	)
 
+	tokenTypes := make([]LexerTokenType, len(LexerTokenValue))
+	for k, _ := range LexerTokenValue {
+		tokenTypes[k] = k
+	}
+	sort.Ints(tokenTypes)
+
 	// lexerStart is the main loop for tokenizing the input string. It
 	// checks for known token prefixes and processes them accordingly.
 	// If a token is matched, the loop continues to check for the next
@@ -148,7 +155,8 @@ func (l *Lexer) Tokenize() ([]LexerToken, error) {
 lexerStart:
 	for position < len(l.input) {
 		// Check for known token prefixes in the input string.
-		for tokenType, tokenValue := range LexerTokenValue {
+		for _, tokenType := range tokenTypes {
+			tokenValue := LexerTokenValue[tokenType]
 			if strings.HasPrefix(l.input[position:], tokenValue) {
 				tokens = append(tokens, LexerToken{
 					Type:     tokenType,
