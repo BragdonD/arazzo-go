@@ -1,8 +1,6 @@
 module github.com/bragdonD/arazzo-go
 
-go 1.23.0
-
-toolchain go1.24.1
+go 1.24.1
 
 require github.com/go-test/deep v1.1.1
 
@@ -16,6 +14,7 @@ require (
 
 require (
 	github.com/bahlo/generic-list-go v0.2.0 // indirect
+	github.com/bragdond/jsonpointer-go v1.0.0 // indirect
 	github.com/buger/jsonparser v1.1.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dprotaso/go-yit v0.0.0-20240618133044-5a0af90af097 // indirect

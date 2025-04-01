@@ -1,17 +1,12 @@
 package v1
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"net/http"
-	"net/url"
-	"os"
-	"path/filepath"
 
 	"github.com/pb33f/libopenapi"
 	oai31 "github.com/pb33f/libopenapi/datamodel/high/v3"
-	"github.com/pb33f/libopenapi/orderedmap"
 )
 
 // FileScheme represents the "file" URL scheme for local file access.
@@ -45,78 +40,28 @@ type OAIOperation struct {
 }
 
 // OAIDocument holds an OpenAPI document model and its source URL.
-type OAIDocument struct {
-	URL   string
-	Model *libopenapi.DocumentModel[oai31.Document]
-}
-
-// LoadOpenAPISource loads an OpenAPI document from a given URL or
-// file path.
-func LoadOpenAPISource(oaiUrl string) (*OAIDocument, error) {
-	oaiContent := []byte{}
-	parsedURL, err := url.Parse(oaiUrl)
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse url: %v", err)
-	}
-
-	// Check if the URL represents a local file.
-	// A local file is identified by:
-	// - Having no scheme (e.g., "myfile.yaml",
-	// "/home/user/myfile.yaml")
-	// - Using the "file" scheme (e.g., "file:///home/user/file.yaml")
-	if parsedURL.Scheme == "" || parsedURL.Scheme == FileScheme {
-		path := filepath.FromSlash(parsedURL.Path)
-		oaiContent, err = os.ReadFile(path)
-		if err != nil {
-			return nil, fmt.Errorf("failed to read file: %v", err)
-		}
-	} else {
-		// TODO: Implement remote file download functionality.
-		return nil, fmt.Errorf("remote file download not implemented")
-	}
-
-	// Parse the OpenAPI document content.
-	openapiDoc, err := libopenapi.NewDocument(oaiContent)
-	if err != nil {
-		return nil, fmt.Errorf(
-			"failed to initialize new openapi doc: %v",
-			err,
-		)
-	}
-	model, errs := openapiDoc.BuildV3Model()
-
-	return &OAIDocument{
-		URL:   oaiUrl,
-		Model: model,
-	}, errors.Join(errs...)
-}
+type OAIDocument = libopenapi.Document
 
 // ExtractOperationsFromOpenAPI extracts API operations from an
 // OpenAPI document.
 func ExtractOperationsFromOpenAPI(
-	oaiDoc *OAIDocument,
+	oaiDoc OAIDocument,
 ) ([]*OAIOperation, error) {
+	v3Doc, errs := oaiDoc.BuildV3Model()
+	if len(errs) > 0 {
+		return nil, errors.Join(errs...)
+	}
+
 	operations := []*OAIOperation{}
 
 	if oaiDoc == nil {
 		return operations, fmt.Errorf("openapi document is nil")
 	}
 
-	// Create a cancellable context for iterating over OpenAPI paths.
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	// Iterate through the OpenAPI paths to extract operations.
-	c := orderedmap.Iterate(ctx, oaiDoc.Model.Model.Paths.PathItems)
-
-	for pair := range c {
-		path := pair.Key()
-		pathItem := pair.Value()
-
+	for path, pathItem := range v3Doc.Model.Paths.PathItems.FromNewest() {
 		if pathItem == nil {
 			continue
 		}
-
 		methods := map[HTTPMethod]*oai31.Operation{
 			MethodGet:     pathItem.Get,
 			MethodHead:    pathItem.Head,
@@ -144,15 +89,14 @@ func ExtractOperationsFromOpenAPI(
 
 // GetOperationById searches for an OpenAPI operation by its
 // OperationId.
-func GetOperationById(
-	operationId string,
-	operations []*OAIOperation,
-) (*OAIOperation, error) {
-	for _, operation := range operations {
-		if operation.Operation.OperationId == operationId {
-			return operation, nil
-		}
-	}
+// func (idx *Index) GetOperationById(
+// 	operationId string,
+// ) (*OAIOperation, error) {
+// 	for _, operation := range idx.operations {
+// 		if operation.Operation.OperationId == operationId {
+// 			return operation, nil
+// 		}
+// 	}
 
-	return nil, fmt.Errorf("operation not found")
-}
+// 	return nil, fmt.Errorf("operation not found")
+// }
