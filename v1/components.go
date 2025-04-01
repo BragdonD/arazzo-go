@@ -23,3 +23,34 @@ type Components struct {
 	successActions map[string]*SuccessAction
 	failureActions map[string]*FailureAction
 }
+
+func NewComponents(model *models.Components) *Components {
+	components := &Components{
+		model:          model,
+		parameters:     map[string]*Parameter{},
+		successActions: map[string]*SuccessAction{},
+		failureActions: map[string]*FailureAction{},
+	}
+
+	for _, param := range model.Parameters {
+		parameter := NewParameter(&param)
+		components.parameters[param.Name] = parameter
+	}
+
+	// TODO: Add success actions
+	// TODO: Add failure actions
+	return components
+}
+
+func (c *Components) GetModel() *models.Components {
+	return c.model
+}
+
+func (c *Components) GetParameters() map[string]*Parameter {
+	return c.parameters
+}
+
+func (c *Components) GetParameter(name string) (*Parameter, bool) {
+	param, ok := c.parameters[name]
+	return param, ok
+}

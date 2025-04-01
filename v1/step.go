@@ -22,12 +22,52 @@ type Step struct {
 	outputs         map[string]any
 }
 
-func NewStep(model *models.Step, parent *Workflow) {
-	step := new(Step)
-	step.model = model
-	step.parent = parent
+func NewStep(model *models.Step, parent *Workflow) (*Step, error) {
+	step := &Step{
+		model:           model,
+		parent:          parent,
+		id:              model.StepId,
+		parameters:      []*Parameter{},
+		requestBody:     nil,
+		successCriteria: []*Criterion{},
+		onSuccess:       []*SuccessAction{},
+		onFailure:       []*FailureAction{},
+		outputs:         map[string]any{},
+	}
 
-	//spec := parent.GetParent()
+	// Step's parameters can come from three sources:
+	//  - the step itself, in this case the parameter MUST NOT
+	//    be duplicated.
+	//  - its parent workflow, in this case the parameter CAN
+	//    be duplicated by the step and it will take precedence.
+	//  - the components object, in this case the parameter is
+	//    store in the components object and the step stores a
+	//    reference to it. This parameter SHOULD NOT be duplicated
+	//    in the step.
+	for _, paramOrReusable := range model.Parameters {
+		var param *models.Parameter
+		var err error
+		if paramOrReusable.Parameter != nil {
+			param = paramOrReusable.Parameter
+		} else if paramOrReusable.Reusable != nil {
+			// TODO: Change this to take a reference from the Components
+			// object store in the workflow's parent spec.
+			param, err = paramOrReusable.Reusable.ToParameter(parent.GetParent().GetComponents().GetModel())
+		}
+		if err != nil {
+			return nil, err
+		}
+		if param != nil {
+			parameter := NewParameter(param)
+			step.parameters = append(step.parameters, parameter)
+		}
+	}
+
+	return step, nil
+}
+
+// checkParameters verifies that parameters are not duplicated
+func (step *Step) checkParameters() error {
 
 }
 

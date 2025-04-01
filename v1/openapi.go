@@ -4,8 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/pb33f/libopenapi"
+	"github.com/pb33f/libopenapi/datamodel"
 	oai31 "github.com/pb33f/libopenapi/datamodel/high/v3"
 )
 
@@ -39,26 +41,64 @@ type OAIOperation struct {
 	Operation *oai31.Operation
 }
 
-// OAIDocument holds an OpenAPI document model and its source URL.
-type OAIDocument = libopenapi.Document
+// OAIDocument holds an OpenAPI document model and its operations.
+type OAIDocument struct {
+	model      *oai31.Document
+	operations []*OAIOperation
+}
 
-// ExtractOperationsFromOpenAPI extracts API operations from an
-// OpenAPI document.
-func ExtractOperationsFromOpenAPI(
-	oaiDoc OAIDocument,
-) ([]*OAIOperation, error) {
-	v3Doc, errs := oaiDoc.BuildV3Model()
+// NewOAIDocument creates a new OAIDocument from the given source URL.
+// TODO: Allow remote sources to be loaded from a URL or file path.
+func NewOAIDocument(source string) (*OAIDocument, error) {
+	// Load the file
+	file, err := os.ReadFile(source)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read file: %w", err)
+	}
+
+	// TODO: Make this configurable by the user
+	config := datamodel.DocumentConfiguration{
+		AllowFileReferences:   true,
+		AllowRemoteReferences: true,
+		BasePath:              source,
+	}
+
+	doc, err := libopenapi.NewDocumentWithConfiguration(file, &config)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create OpenAPI document: %w", err)
+	}
+
+	model, errs := doc.BuildV3Model()
+
+	// if anything went wrong when building the v3 model,
+	// a slice of errors will be returned
 	if len(errs) > 0 {
 		return nil, errors.Join(errs...)
 	}
 
+	operations, err := extractOperationsFromOpenAPI(&model.Model)
+	if err != nil {
+		return nil, fmt.Errorf("failed to extract operations: %w", err)
+	}
+
+	return &OAIDocument{
+		model:      &model.Model,
+		operations: operations,
+	}, nil
+}
+
+// extractOperationsFromOpenAPI extracts API operations from an
+// OpenAPI document.
+func extractOperationsFromOpenAPI(
+	oaiDoc *oai31.Document,
+) ([]*OAIOperation, error) {
 	operations := []*OAIOperation{}
 
 	if oaiDoc == nil {
 		return operations, fmt.Errorf("openapi document is nil")
 	}
 
-	for path, pathItem := range v3Doc.Model.Paths.PathItems.FromNewest() {
+	for path, pathItem := range oaiDoc.Paths.PathItems.FromNewest() {
 		if pathItem == nil {
 			continue
 		}

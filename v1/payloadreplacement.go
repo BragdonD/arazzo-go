@@ -30,3 +30,7 @@ func NewPayloadReplacement(pr *models.PayloadReplacement) (*PayloadReplacement, 
 		value:  NewValue(pr.Value),
 	}, nil
 }
+
+func (p *PayloadReplacement) ApplyToPayload(payload any, spec *Spec) error {
+
+}
